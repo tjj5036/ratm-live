@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <h3>Song Statistics</h3>
+    </div>
+  </div>
+
+  {% set index = [1] %}
+  {% for song in songs %}
+  <div class="row song-listing-row">
+    <div class="col-1">
+      {% if loop.previtem is defined and loop.previtem.concert_count != song.concert_count %}
+      {% if index.append(index.pop() + 1) %}{% endif %} {# increment order by 1 #}
+      {{ index[0] }}
+      {% elif not loop.previtem %}
+      {{ index[0] }}
+      {% endif %}
+    </div>
+    <div class="col-4 song-listing-title" >
+      <a href={{ url_for('song.song_get_by_artist_name', artist_name=artist.artist_short_name, song_url=song.song_url) }}> {{ song.title }}</a>
+    </div>
+    <div class="col-7">
+      <div class="progress">
+        {% set value_now = song.concert_count / max_performance_count * 100 %}
+        <div class="progress-bar" role="progressbar" style="width: {{ value_now }}%;" aria-valuenow="{{ value_now }}" aria-valuemin="0" aria-valuemax="{{ max_performance_count}}">{{ song.concert_count }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

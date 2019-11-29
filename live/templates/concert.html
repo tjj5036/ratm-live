@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <h1>{{ artist.artist_name }}</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto" id="show_info_container">
+      <h3>Show Information:</h3>
+      <dl class="dl-horizontal">
+          <dt>Date:</dt>
+          <dd>{{ concert.date }}</dd>
+
+          {% if concert.venue %}
+          <dt>Venue:</dt>
+          <dd>{{ concert.venue.venue_name }}</dd>
+          {% endif %}
+
+          {% if concert.location %}
+          <dt>Location:</dt>
+          <dd>
+          {% if concert.location.state %}
+          {% set location =  concert.location.city + ', ' + concert.location.state + ' ' +  concert.location.country %}
+          {% else %}
+          {% set location =  concert.location.city + ', ' +  concert.location.country %}
+          {% endif %}
+          {{ location }}
+          </dd>
+          {% endif %}
+
+
+          {% if concert.notes %}
+          <dt>Notes:</dt>
+          <dd>{{ concert.notes }}</dd>
+          {% endif %}
+      </dl>
+    </div>
+
+    <div class="col-12 mx-auto">
+      {% set order = [1] %}
+      {% if concert.setlist %}
+      <h3>Setlist {{ '(Complete)' if concert.setlist.complete else '(Incomplete)'}}:</h3>
+      <ul class="list-group list-group-flush">
+        {% for setlist_song in concert.setlist.setlist_songs %}
+        <li class="list-group-item song-item">{{ order[0] }}
+          <a href={{ url_for('song.song_get_by_artist_name', artist_name=artist.artist_short_name, song_url=setlist_song.song_url) }}>{{ setlist_song.title }} </a> {{ '(' + setlist_song.original_artist_name + ' cover)' if setlist_song.original_artist_name else '' }}
+        </li>
+        {% if order.append(order.pop() + 1) %}{% endif %} {# increment order by 1 #}
+        {% endfor %}
+      </ul>
+
+      {% endif %}
+    </div>
+  </div>
+
+  {% if recordings|length > 0 %}
+    {% include 'recording.html' %}
+  {% endif %}
+
+  <div class="row">
+    {% if media|length > 0 %}
+    <h3>Memorabilia / Photos:</h3>
+      {% for media_info in media %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

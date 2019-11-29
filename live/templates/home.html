@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Welcome!</h1>
+      <p>
+        Welcome to the unofficial Rage Against the Machine live archive!
+        The goal of this site to archive everything live-Rage related: recordings, setlists, posters, ticket stubs, etc.
+        Live recordings are available to download for many shows - browse through the concerts to see which ones have recordings available!
+      </p>
+      <p>
+        I'm always on the hunt for recordings I do not have to add to the archive.
+        Please get in touch if you have something not listed here or something that there isn't a link for!
+      </p>
+      <p>
+        While I do try and share updates on this page, I do quite frequently update shows without adding an update entry.
+        Check back to see if there is anything new - never hurts to dig around. 
+        You might find something interesting if you do!
+        I will also start posting updates on <a href="https://www.instagram.com/ratm.live/">Instagram</a> as well on a more frequent basis.
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <h1>Updates:</h1>
+      {% for update in updates %}
+      <div class="row update-row">
+        <div class="col-4">{{ update.update_date }}</div>
+        <div class="col-7">{{ update.blurb }}</div>
+        <div class="col-1"><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=update.artist_short_name, concert_friendly_url=update.concert_friendly_url) }}>Go</a></div>
+      </div>
+      {% endfor %}
+      <div class="row">
+        <div class="col-12">
+          <p>
+            <a href="/update-archive">Past Updates.</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <h1>Confirmed Upcoming Shows:</h1>
+      {% include 'concert_list.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

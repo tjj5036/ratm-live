@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Update Archive:</h1>
+      {% for update in updates %}
+      <div class="row">
+        <div class="col-2">
+          {{ update.update_date }}
+        </div>
+        <div class="col-2">
+          <a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=update.artist_short_name, concert_friendly_url=update.concert_friendly_url) }}>Concert Link</a>
+        </div>
+        <div class="col-8">
+          {{ update.blurb }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

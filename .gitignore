@@ -1,0 +1,4 @@
+*.pyc
+venv
+.DS_Store
+live/static/img/.DS_Store

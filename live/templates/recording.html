@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-12">
+    <h3>Recordings:</h3>
+  <div>
+  {% for recording in recordings %}
+  <div class="row recording">
+    <div class="col-12"><b>Type:</b> {{ recording.recording_type.recording_name }} - {{ recording.source_type.source_name }}</div>
+    <div class="col-12"><b>Length:</b> {{ recording.length if recording.length > 0 else '??' }} minutes</div>
+    <div class="col-12"><b>Complete:</b> {{ 'Yes' if recording.complete else 'No' }} </div>
+    <div class="col-12"><b>Taper:</b> {{ recording.taper if recording.taper else 'Unknown' }}</div>
+    <div class="col-12"><b>Lineage:</b> {{ recording.lineage if recording.lineage else 'Unknown' }} </div>
+    {% if recording.notes %}
+    <div class="col-12"><b>Notes:</b> {{ recording.notes}}</div>
+    {% endif %}
+    {% if recording.recording_files|length > 0 %}
+    {% for recording_file in recording.recording_files %}
+    <div class="col-12"><b><a href="{{ recording_file }}">Download</a></b></div>
+    {% endfor %}
+    {% endif %}
+    {% if recording.preview_urls|length > 0 %}
+    <div class="col-12"><b>Preview:</b></div>
+    {% for preview_url in recording.preview_urls %}
+    <div class="col-12 video-container" >
+      <iframe src="{{ preview_url }} " frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>

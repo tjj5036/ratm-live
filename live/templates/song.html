@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <h1>{{ artist.artist_name }}</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3>{{ song.title}}</h3>
+    </div>
+  </div>
+
+  {% if first_performance_date %}
+  <div class="row">
+    <div class="col-12">
+      <h5>Total Times Played:</h5>
+      {{ concerts|length }}
+    </div>
+    <div class="col-12">
+      <h5>First performance:</h5>
+      {{ first_performance_date }}
+    </div>
+    <div class="col-12">
+      <h5>Latest Performance:</h5>
+      {{ latest_performance_date }}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-12">
+      {% if song.lyrics %}
+      <h5>Lyrics:</h5>
+      <div class="lyrics-container">{{ song.lyrics }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row notes-row">
+    <div class="col-12">
+      {% if song.notes %}
+      <h5>Notes:</h5>
+      <h5>{{ song.notes }}</h5>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button data-toggle="collapse" data-target="#all-concerts">Show / Hide All Concerts Performed At</button>
+      <div id="all-concerts" class="collapse accordion-body">
+      {% include 'concert_list.html' %}
+      <div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
