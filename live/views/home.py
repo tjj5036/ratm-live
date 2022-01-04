@@ -51,3 +51,11 @@ def most_wanted():
     """
     return render_template(
             "most_wanted.html")
+
+
+@blueprint.route('/links')
+def links():
+    """ Renders the links page.
+    """
+    return render_template(
+            "links.html")
