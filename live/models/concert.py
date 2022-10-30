@@ -21,7 +21,8 @@ class Concert:
             has_setlist=False,
             has_recordings=False,
             has_media=False,
-            row=None):
+            row=None,
+            concerts_before_after=None):
         """ Initializes a concert object. Either uses a database
         object (row) directly, or uses passed in values.
 
@@ -38,6 +39,8 @@ class Concert:
             row: object encapsulating concert informatin specified directly
                  from the database. If specified, takes precedence. Note that
                  artist_id is still required
+            concerts_before_after: list of concerts that came immediately before/after
+                                   the current one.
         
         """
         self.artist_id = artist_id
@@ -69,12 +72,16 @@ class Concert:
         # This is populated by a separate query
         self.setlist = setlist
 
+        # Separate query
+        self.concerts_before_after = concerts_before_after
+
 
 def initialize_from_result(
         cur, 
         artist_inst,
         concert_row,
-        fetch_setlist=False):
+        fetch_setlist=False,
+        fetch_before_prev_concert=False):
     """ Given a db result, initializes a fully populated concert,
     including venue and location information.
 
@@ -83,6 +90,7 @@ def initialize_from_result(
         artist_inst: instance of an Artist object
         concert_row: a row from the database representing concert info
         fetch_setlist: if true, resolves the setlist for this concert.
+        fetch_before_prev_concert: if true, gets the concert info before/after the given one
     """
     location = Location(
         concert_row["country_name"],
@@ -100,12 +108,58 @@ def initialize_from_result(
                 artist_inst.artist_id,
                 concert_row["concert_id"])
 
+    concerts_before_after = []
+    if fetch_before_prev_concert:
+        # This is actually kind of gnarly. We have to do a rank
+        # and then select the dates prior/before if present
+        cur.execute("""
+            with near_final as (
+                with before_after as (
+                    with concert_artist_dates as (
+                        select cc.artist_id,
+                               cc.date,
+                               cc.concert_friendly_url,
+                               row_number() over (ORDER BY cc.date asc) as rn
+                        from concerts as cc 
+                        where cc.artist_id=%s
+                    )
+                    select 
+                        prev.date as prev_date,
+                        prev.concert_friendly_url as prev_concert_friendly_url,
+                        next.date as next_date,
+                        next.concert_friendly_url as next_concert_friendly_url
+                    from concert_artist_dates curr
+                    left outer join concert_artist_dates next ON curr.rn+1=next.rn
+                    right outer join concert_artist_dates prev ON curr.rn-1=prev.rn
+                    where curr.artist_id=%s and curr.concert_friendly_url=%s 
+                )
+                select prev_concert_friendly_url as concert_friendly_url from before_after
+                union all
+                select next_concert_friendly_url as concert_friendly_url from before_after
+            )
+            select * from near_final""",
+            (artist_inst.artist_id,
+              artist_inst.artist_id,
+              concert_row.get('concert_friendly_url')))
+        concert_rows = cur.fetchall()
+        if not concert_rows:
+            concert_rows = []
+        for cr in concert_rows:
+            concerts_before_after.append(
+                get_for_artist_and_url(
+                  cur,
+                  artist_inst,
+                  cr.get('concert_friendly_url'),
+                  fetch_setlist=False,
+                  fetch_before_prev_concert=False))
+
     concert = Concert(
         artist_inst.artist_id,
         row=concert_row,
         setlist=setlist,
         venue=venue,
-        location=location)
+        location=location,
+        concerts_before_after=concerts_before_after)
     return concert
 
 
@@ -219,7 +273,12 @@ def get_upcoming_concerts(cur, artist_inst, limit=None):
     return res
 
 
-def get_for_artist_and_url(cur, artist_inst, url):
+def get_for_artist_and_url(
+        cur,
+        artist_inst,
+        url,
+        fetch_setlist=True,
+        fetch_before_prev_concert=True):
     """ Returns a concert given an artist and a url.
 
     Args:
@@ -245,8 +304,7 @@ def get_for_artist_and_url(cur, artist_inst, url):
           full join cities on l.fk_cities_id = cities.id 
           full join states on l.fk_state_id = states.id
         where c.artist_id=%s
-              and c.concert_friendly_url=%s 
-        order by c.date asc;""",
+              and c.concert_friendly_url=%s""",
         (artist_inst.artist_id, url))
     concert_row = cur.fetchone()
     if not concert_row:
@@ -255,7 +313,8 @@ def get_for_artist_and_url(cur, artist_inst, url):
             cur,
             artist_inst,
             concert_row,
-            fetch_setlist=True)
+            fetch_setlist=fetch_setlist,
+            fetch_before_prev_concert=fetch_before_prev_concert)
     return concert
 
 

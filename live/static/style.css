@@ -27,6 +27,12 @@
   max-width: 700px;
 }
 
+.concert-img-car {
+  width:100%;
+  max-width: 750px;
+}
+
+
 #background {
   background:url('https://ratmlive.sfo2.digitaloceanspaces.com/static/img/background1.png');
   opacity: .10;

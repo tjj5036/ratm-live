@@ -37,10 +37,40 @@
           <dt>Notes:</dt>
           <dd>{{ concert.notes }}</dd>
           {% endif %}
+
+          {% if concert.concerts_before_after|length > 0 %}
+          <dt>Previous show:</dt>
+            {% if concert.concerts_before_after[0] is not none %}
+              {% if concert.concerts_before_after[0].location.state %}
+              {% set location =  concert.concerts_before_after[0].location.city + ', ' + concert.concerts_before_after[0].location.state + ' ' +  concert.concerts_before_after[0].location.country %}
+              {% else %}
+              {% set location =  concert.concerts_before_after[0].location.city + ', ' + concert.concerts_before_after[0].location.country %}
+              {% endif %}
+              <dd><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=artist.artist_short_name, concert_friendly_url=concert.concerts_before_after[0].concert_friendly_url) }}>{{ concert.concerts_before_after[0].date}}</a> - {{ concert.concerts_before_after[0].venue.venue_name if concert.concerts_before_after[0].venue.venue_name else 'Unknown' }} {{ location }}</dd>
+            {% else %}
+              No known earlier shows!
+            {% endif %}
+          <dt> Next show:</dt> 
+            {% if concert.concerts_before_after[1] is not none %}
+              {% if concert.concerts_before_after[1].location.state %}
+              {% set location =  concert.concerts_before_after[1].location.city + ', ' + concert.concerts_before_after[1].location.state + ' ' +  concert.concerts_before_after[1].location.country %}
+              {% else %}
+              {% set location =  concert.concerts_before_after[1].location.city + ', ' + concert.concerts_before_after[1].location.country %}
+              {% endif %}
+              <dd><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=artist.artist_short_name, concert_friendly_url=concert.concerts_before_after[1].concert_friendly_url) }}>{{ concert.concerts_before_after[1].date}}</a> - {{ concert.concerts_before_after[1].venue.venue_name if concert.concerts_before_after[1].venue.venue_name else 'Unknown' }} {{ location }}</dd>
+            {% else %}
+              No known future shows!
+            {% endif %}
+          {% endif %}
       </dl>
     </div>
 
-    <div class="col-12 mx-auto">
+    <div class="row">
+      <div class="col-12 mx-auto" id="prev_next_show">
+      </div>
+    </div>
+
+    <div class="col-12 mx-auto" style="padding-bottom:20px">
       {% set order = [1] %}
       {% if concert.setlist %}
       <h3>Setlist {{ '(Complete)' if concert.setlist.complete else '(Incomplete)'}}:</h3>
@@ -57,20 +87,112 @@
     </div>
   </div>
 
-  {% if recordings|length > 0 %}
-    {% include 'recording.html' %}
-  {% endif %}
-
   <div class="row">
-    {% if media|length > 0 %}
-    <h3>Memorabilia / Photos:</h3>
-      {% for media_info in media %}
+    <div class="col-12 mx-auto">
+      <h3>Setlist Pic:</h3>
+    </div>
+    {% if media['setlist']|length > 0 %}
+      {% for media_info in media['setlist'] %}
       <div class="col-12" style="padding-bottom:20px" >
         <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
       </div>
       {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
     {% endif %}
   </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto">
+      <h3>Tickets:</h3>
+    </div>
+    {% if media['ticket']|length > 0 %}
+      {% for media_info in media['ticket'] %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto">
+      <h3>Posters / Flyers:</h3>
+    </div>
+    {% if media['poster_flyer']|length > 0 %}
+      {% for media_info in media['poster_flyer'] %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto">
+      <h3>Live Shots:</h3>
+    </div>
+    {% if media['live_shot']|length > 0 %}
+      {% for media_info in media['live_shot'] %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto">
+      <h3>Tour Itinerary:</h3>
+    </div>
+    {% if media['tour_itinerary']|length > 0 %}
+      {% for media_info in media['tour_itinerary'] %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-12 mx-auto">
+      <h3>Other Pics:</h3>
+    </div>
+    {% if media['other']|length > 0 %}
+      {% for media_info in media['other'] %}
+      <div class="col-12" style="padding-bottom:20px" >
+        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12" style="padding-bottom:20px" >
+      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if recordings|length > 0 %}
+    {% include 'recording.html' %}
+  {% endif %}
+
 
 </div>
 {% endblock %}
