@@ -22,7 +22,8 @@ class Concert:
             has_recordings=False,
             has_media=False,
             row=None,
-            concerts_before_after=None):
+            concerts_before_after=None,
+            tour=None):
         """ Initializes a concert object. Either uses a database
         object (row) directly, or uses passed in values.
 
@@ -41,6 +42,7 @@ class Concert:
                  artist_id is still required
             concerts_before_after: list of concerts that came immediately before/after
                                    the current one.
+            tour: a tour reference if part of a tour
         
         """
         self.artist_id = artist_id
@@ -53,6 +55,7 @@ class Concert:
             self.has_setlist = row.get('has_setlist', False)
             self.has_recordings = row.get('has_recordings', False)
             self.has_media = row.get('has_media', False)
+            self.tour = row.get('tour_name', None)
 
         else:
             self.concert_id = concert_id
@@ -63,6 +66,7 @@ class Concert:
             self.has_setlist = has_setlist
             self.has_recordings = has_recordings
             self.has_media = has_media
+            self.tour = tour
 
         # Information tied to concerts that is usually derived from
         # the same query (ie, fetching location information)
@@ -191,7 +195,8 @@ def get_all_for_artist_listing_only(cur, artist_inst, year=None):
                    states.name as state_name,
                    cs.complete is not null as has_setlist,
                    cr.concert_id is not null as has_recordings,
-                   cm.concert_id is not null as has_media
+                   cm.concert_id is not null as has_media,
+                   ct.name as tour_name
             from concerts as c 
               full join venues as v on c.venue_id = v.venue_id
               full join locations as l on c.location_id = l.id 
@@ -201,6 +206,7 @@ def get_all_for_artist_listing_only(cur, artist_inst, year=None):
               full join concert_setlist as cs on c.concert_id = cs.concert_id
               full join (select distinct concert_id from concert_recording_mapping) as cr on c.concert_id = cr.concert_id
               full join (select distinct concert_id from media_concert) as cm on c.concert_id = cm.concert_id
+              full join concert_tours as ct on c.tour_id = ct.id
             where c.artist_id = %s
             order by date ASC;""", (artist_inst.artist_id,))
     else:
@@ -213,7 +219,8 @@ def get_all_for_artist_listing_only(cur, artist_inst, year=None):
                    states.name as state_name,
                    cs.complete is not null as has_setlist,
                    cr.concert_id is not null as has_recordings,
-                   cm.concert_id is not null as has_media
+                   cm.concert_id is not null as has_media,
+                   ct.name as tour_name
             from concerts as c 
               full join venues as v on c.venue_id = v.venue_id
               full join locations as l on c.location_id = l.id 
@@ -223,7 +230,7 @@ def get_all_for_artist_listing_only(cur, artist_inst, year=None):
               full join concert_setlist as cs on c.concert_id = cs.concert_id
               full join (select distinct concert_id from concert_recording_mapping) as cr on c.concert_id = cr.concert_id
               full join (select distinct concert_id from media_concert) as cm on c.concert_id = cm.concert_id
-
+              full join concert_tours as ct on c.tour_id = ct.id
             where c.artist_id = %s
                   and date_part('year', c.date) = %s
             order by date ASC;""", (artist_inst.artist_id, year))
@@ -296,13 +303,15 @@ def get_for_artist_and_url(
                v.venue_name,
                countries.name as country_name,
                cities.name as city_name,
-               states.name as state_name
+               states.name as state_name,
+               ct.name as tour_name
         from concerts as c 
           full join venues as v on c.venue_id = v.venue_id
           full join locations as l on c.location_id = l.id 
           full join countries on l.fk_country_id = countries.id
           full join cities on l.fk_cities_id = cities.id 
           full join states on l.fk_state_id = states.id
+          full join concert_tours as ct on c.tour_id = ct.id
         where c.artist_id=%s
               and c.concert_friendly_url=%s""",
         (artist_inst.artist_id, url))

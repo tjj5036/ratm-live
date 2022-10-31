@@ -32,6 +32,14 @@
   max-width: 750px;
 }
 
+.tour-list-info {
+  color: #d80000;
+  font-weight: bold;
+}
+
+.tour-list-not-first {
+  padding-top:80px;
+}
 
 #background {
   background:url('https://ratmlive.sfo2.digitaloceanspaces.com/static/img/background1.png');

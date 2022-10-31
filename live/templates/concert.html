@@ -32,6 +32,10 @@
           </dd>
           {% endif %}
 
+          {% if concert.tour %}
+          <dt>Tour:</dt>
+          <dd>{{ concert.tour }}</dd>
+          {% endif %}
 
           {% if concert.notes %}
           <dt>Notes:</dt>

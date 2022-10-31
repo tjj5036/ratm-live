@@ -2,8 +2,22 @@
 
     {% for concert in concerts %}
 
-    <div class="row concert-listing-row">
+      {% if loop.index0 == 0 %}
+        {% if concert.tour is not none %}
+        <div class="row concert-listing-row">
+          <div class="col-12 tour-list-info">{{ concert.tour }}</div>
+        </div>
+        {% endif %}
+      {% elif concerts[loop.index0-1].tour != concert.tour  %}
+        <div class="row concert-listing-row tour-list-not-first">
+        {% if concert.tour is not none %}
+          <div class="col-12 tour-list-info">{{ concert.tour }}</div>
+        {% endif %}
+        </div>
+      {% else %}
+      {% endif %}
 
+    <div class="row concert-listing-row">
       {% if concert.location.state %}
       {% set location =  concert.location.city + ', ' + concert.location.state + ' ' +  concert.location.country %}
       {% else %}
