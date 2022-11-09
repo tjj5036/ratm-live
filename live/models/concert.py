@@ -167,6 +167,46 @@ def initialize_from_result(
     return concert
 
 
+def get_all_for_era(cur, artist_inst, era_inst):
+    """ Gets all concerts for an artist and a particular era.
+
+    Args:
+        artist_inst: Artist instance
+        era_inst: Era instance
+    """
+    if not artist_inst or not era_inst:
+        return None
+    cur.execute("""
+        select c.date,
+               c.concert_friendly_url,
+               v.venue_name,
+               countries.name as country_name,
+               cities.name as city_name,
+               states.name as state_name,
+               cs.complete is not null as has_setlist,
+               cr.concert_id is not null as has_recordings,
+               cm.concert_id is not null as has_media,
+               ct.name as tour_name
+        from concerts as c 
+          full join venues as v on c.venue_id = v.venue_id
+          full join locations as l on c.location_id = l.id 
+          full join countries on l.fk_country_id = countries.id
+          full join cities on l.fk_cities_id = cities.id 
+          full join states on l.fk_state_id = states.id
+          full join concert_setlist as cs on c.concert_id = cs.concert_id
+          full join (select distinct concert_id from concert_recording_mapping) as cr on c.concert_id = cr.concert_id
+          full join (select distinct concert_id from media_concert) as cm on c.concert_id = cm.concert_id
+          full join concert_tours as ct on c.tour_id = ct.id
+        where c.artist_id = %s and c.era_id = %s
+        order by date ASC;""", (artist_inst.artist_id, era_inst.era_id))
+    res = []
+    concerts = cur.fetchall()
+    for concert_row in concerts:
+        concert = initialize_from_result(cur, artist_inst, concert_row)
+        res.append(concert)
+    return res
+
+
 def get_all_for_artist_listing_only(cur, artist_inst, year=None):
     """ Gets all concerts for an artist. This returns a subset of concert
     information, it's namely intended to be used when listing concert info,

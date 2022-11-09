@@ -13,14 +13,25 @@
         I'm always on the hunt for recordings I do not have to add to the archive.
         Please get in touch if you have something not listed here or something that there isn't a link for!
       </p>
-      <p>
-        While I do try and share updates on this page, I do quite frequently update shows without adding an update entry.
-        Check back to see if there is anything new - never hurts to dig around. 
-        You might find something interesting if you do!
-        I will also start posting updates on <a href="https://www.instagram.com/ratm.live/">Instagram</a> as well on a more frequent basis.
-      </p>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h1>Tours and Eras</h1>
+    </div>
+
+    {% for era in eras %}
+    <div class="tour-or-era-wrapper col-lg-3 col-md-6 col-12">
+      <figure class="hover-img">
+        <img class="tour-title" src="{{ config ['STATIC_URI'] }}/{{era.era_tile}}">
+        <figcaption>
+          <h3><a href={{ url_for('tours_and_eras.eras', artist_name=artist.artist_short_name, era_identifier=era.era_identifier) }} >Go</a></h3>
+        </figcaption>
+      </figure>
+    </div>
+    {% endfor %}
+
   <div class="row">
     <div class="col-12">
       <h1>Updates:</h1>

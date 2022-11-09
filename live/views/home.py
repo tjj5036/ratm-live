@@ -8,6 +8,7 @@ from live.database import get_dict_cursor
 from live.models import (
         artist,
         concert,
+        era,
         update)
 
 blueprint = Blueprint('home', __name__)
@@ -22,6 +23,9 @@ def home():
     primary_short_name = current_app.config.get(
         "PRIMARY_ARTIST_SHORT_NAME", "rage")
     artist_inst = artist.get_artist_from_short_name(cur, primary_short_name)
+
+    eras = era.get_all_for_artist(cur, artist_inst)
+
     upcoming_concerts = []
     if artist_inst:
         upcoming_concerts = concert.get_upcoming_concerts(
@@ -31,6 +35,7 @@ def home():
             "home.html",
             artist=artist_inst,
             concerts=upcoming_concerts,
+            eras=eras,
             updates=recent_updates)
 
 

@@ -15,7 +15,8 @@ from live.views import (
         concerts,
         contact,
         home,
-        song)
+        song,
+        tours_and_eras)
 
 STATIC_URI = "https://ratmlive.sfo2.digitaloceanspaces.com"
 
@@ -39,6 +40,7 @@ def register_blueprints(app):
     app.register_blueprint(contact.blueprint)
     app.register_blueprint(home.blueprint)
     app.register_blueprint(song.blueprint)
+    app.register_blueprint(tours_and_eras.blueprint)
 
 
 def page_not_found(e):
