@@ -91,112 +91,51 @@
     </div>
   </div>
 
+  {% set imgs = [
+    ('Setlist Pic', 'setlist'),
+    ('Tickets', 'ticket'),
+    ('Poster / Flyers', 'poster_flyer'),
+    ('Live Shots', 'live_shot'),
+    ('Tour Itinerary', 'tour_itinerary'),
+    ('Other Pics', 'other')] %}
+  {% for img in imgs %}
   <div class="row">
     <div class="col-12 mx-auto">
-      <h3>Setlist Pic:</h3>
+      <h3>{{ img[0] }}:</h3>
     </div>
-    {% if media['setlist']|length > 0 %}
-      {% for media_info in media['setlist'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+    <div class="col-md-6">
+      {% if media[img[1]]|length > 0 %}
+      <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          {% for media_info in media[img[1]] %}
+          {% if loop.index0 == 0 %}
+          <div class="carousel-item active">
+          {% else %}
+          <div class="carousel-item">
+          {% endif %}
+            <img class="d-block w-100 img-fluid" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
+          </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
-      {% endfor %}
     {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
       <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
     {% endif %}
+    </div>
   </div>
-
-  <div class="row">
-    <div class="col-12 mx-auto">
-      <h3>Tickets:</h3>
-    </div>
-    {% if media['ticket']|length > 0 %}
-      {% for media_info in media['ticket'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
-      </div>
-      {% endfor %}
-    {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
-      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="row">
-    <div class="col-12 mx-auto">
-      <h3>Posters / Flyers:</h3>
-    </div>
-    {% if media['poster_flyer']|length > 0 %}
-      {% for media_info in media['poster_flyer'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
-      </div>
-      {% endfor %}
-    {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
-      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="row">
-    <div class="col-12 mx-auto">
-      <h3>Live Shots:</h3>
-    </div>
-    {% if media['live_shot']|length > 0 %}
-      {% for media_info in media['live_shot'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
-      </div>
-      {% endfor %}
-    {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
-      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="row">
-    <div class="col-12 mx-auto">
-      <h3>Tour Itinerary:</h3>
-    </div>
-    {% if media['tour_itinerary']|length > 0 %}
-      {% for media_info in media['tour_itinerary'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
-      </div>
-      {% endfor %}
-    {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
-      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="row">
-    <div class="col-12 mx-auto">
-      <h3>Other Pics:</h3>
-    </div>
-    {% if media['other']|length > 0 %}
-      {% for media_info in media['other'] %}
-      <div class="col-12" style="padding-bottom:20px" >
-        <img class="concert-img" src="{{ config ['STATIC_URI'] }}/{{ media_info.media_url }}">
-      </div>
-      {% endfor %}
-    {% else %}
-    <div class="col-12" style="padding-bottom:20px" >
-      <p>No images to display at this time - <a href="mailto:ratm.live@gmail.com">Email Me</a>  if you have any!</p>
-    </div>
-    {% endif %}
-  </div>
+  {% endfor %}
 
   {% if recordings|length > 0 %}
     {% include 'recording.html' %}
   {% endif %}
-
 
 </div>
 {% endblock %}
