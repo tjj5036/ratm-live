@@ -14,24 +14,40 @@
     </div>
   </div>
 
-  {% if first_performance_date %}
   <div class="row">
     <div class="col-12">
       <h5>Total Times Played:</h5>
       {{ concerts|length }}
     </div>
-    <div class="col-12">
+    <div class="col-12 performance-info">
       <h5>First performance:</h5>
-      {{ first_performance_date }}
+      {% if first_performance is not none %}
+        {% if first_performance.location.state %}
+        {% set location =  first_performance.location.city + ', ' + first_performance.location.state + ' ' +  first_performance.location.country %}
+        {% else %}
+        {% set location =  first_performance.location.city + ', ' + first_performance.location.country %}
+        {% endif %}
+        <dd><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=artist.artist_short_name, concert_friendly_url=first_performance.concert_friendly_url) }}>{{ first_performance.date}}</a> - {{ first_performance.venue.venue_name if first_performance.venue.venue_name else 'Unknown' }} {{ location }}</dd>
+      {% else %}
+        This song has never been performed live!
+      {% endif %}
     </div>
-    <div class="col-12">
+    <div class="col-12 performance-info">
       <h5>Latest Performance:</h5>
-      {{ latest_performance_date }}
+      {% if latest_performance is not none %}
+        {% if latest_performance.location.state %}
+        {% set location =  latest_performance.location.city + ', ' + latest_performance.location.state + ' ' +  latest_performance.location.country %}
+        {% else %}
+        {% set location =  latest_performance.location.city + ', ' + latest_performance.location.country %}
+        {% endif %}
+        <dd><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=artist.artist_short_name, concert_friendly_url=latest_performance.concert_friendly_url) }}>{{ latest_performance.date}}</a> - {{ latest_performance.venue.venue_name if latest_performance.venue.venue_name else 'Unknown' }} {{ location }}</dd>
+      {% else %}
+        This song has never been performed live!
+      {% endif %}
     </div>
   </div>
-  {% endif %}
 
-  <div class="row">
+  <div class="row lyrics-row">
     <div class="col-12">
       {% if song.lyrics %}
       <h5>Lyrics:</h5>

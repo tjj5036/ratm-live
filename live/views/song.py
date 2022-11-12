@@ -7,6 +7,7 @@ from flask import (
 from live.database import get_dict_cursor
 from live.models import (
         artist,
+        concert,
         song)
 
 blueprint = Blueprint('song', __name__)
@@ -29,19 +30,19 @@ def song_get_by_artist_name(artist_name, song_url):
     if not song_inst:
         abort(404)
 
-    first_performance_date = None
-    latest_performance_date = None
+    first_performance = None
+    latest_performance = None
     if song_inst.concerts and len(song_inst.concerts) > 0:
-        first_performance_date = song_inst.concerts[0].date
-        latest_performance_date = song_inst.concerts[-1].date
+        first_performance = song_inst.concerts[0]
+        latest_performance = song_inst.concerts[-1]
 
     return render_template(
             "song.html",
             artist=artist_inst,
             concerts=song_inst.concerts,
             song=song_inst,
-            first_performance_date=first_performance_date,
-            latest_performance_date=latest_performance_date)
+            first_performance=first_performance,
+            latest_performance=latest_performance)
 
 
 
