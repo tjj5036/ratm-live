@@ -41,11 +41,17 @@
   padding-top:80px;
 }
 
+.update-date {
+  color: #FFBA00;
+  font-weight: bold;
+}
+
 #background {
-  background:url('https://ratmlive.sfo2.digitaloceanspaces.com/static/img/background1.png');
-  opacity: .10;
+  background:url('https://ratmlive.sfo2.digitaloceanspaces.com/static/img/background-dark.jpg');
+  opacity: .60;
   background-size:cover; /* cover will scale the image so that the smallest dimension = the widest dimension of the box */
-  background-repeat: repeat-y;
+  background-repeat: no-repeat;
+  #background-repeat: repeat-y;
   position:fixed; /* take me out of the render context! let me define my own positioning */
   top:0;bottom:0;left:0;right:0; /* this could also work with width:100%; height:100%;, but is simpler */
   z-index: -900;
@@ -58,14 +64,18 @@
 .container {
   /*background-color:fefefe;*/
   /*font-weight: bold;*/
+  color:white;
 }
 
 li.song-item {
   background-color:transparent;
+  font-weight: bold;
 }
 
 a {
-  color: #d80000;
+  #color: #d80000;
+  color: black;
+  font-weight: bold;
 }
 
 body {
@@ -104,6 +114,7 @@ body {
   margin: auto;
   #padding: 0% 0% 56.25%; /* 16:9 ratio */
   overflow: hidden;
+  margin-left:0px;
 }
 .video-container iframe {
   position: absolute;

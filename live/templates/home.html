@@ -37,7 +37,7 @@
       <h1>Updates:</h1>
       {% for update in updates %}
       <div class="row update-row">
-        <div class="col-3"><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=update.artist_short_name, concert_friendly_url=update.concert_friendly_url) }}>{{ update.update_date }}</a></div>
+        <div class="col-3 update-date"><a href={{ url_for('concerts.concerts_get_by_artist_and_concert_friendly_url', artist_name=update.artist_short_name, concert_friendly_url=update.concert_friendly_url) }}>{{ update.update_date }}</a></div>
         <div class="col-9">{{ update.blurb }}</div>
       </div>
       {% endfor %}
